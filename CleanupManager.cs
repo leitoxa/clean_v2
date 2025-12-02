@@ -1,10 +1,13 @@
 /*
- * File Cleanup Manager - Multi-Tab Version
+ * File Cleanup Manager (Multi-Tab)
  * 
  * Приложение для автоматической очистки старых файлов с графическим интерфейсом,
  * поддержкой нескольких папок через вкладки и Windows Service.
  * 
- * Author: Serik Muftakhidinov
+ * Copyright (c) 2025 Serik Mufakhidinov
+ * Licensed under the MIT License - see LICENSE file for details
+ * 
+ * Author: Serik Mufakhidinov
  * Created: 30.11.2025
  * Version: 2.0.0
  * 
