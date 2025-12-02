@@ -1,0 +1,115 @@
+﻿Выполняется установка сборки 'C:\tmp\clean_v2\CleanupManager.exe'.
+Затронуты следующие параметры:
+   logtoconsole = 
+   assemblypath = C:\tmp\clean_v2\CleanupManager.exe
+   logfile = C:\tmp\clean_v2\CleanupManager.InstallLog
+Устанавливается служба FileCleanupService...
+Служба FileCleanupService успешно установлена.
+Создается исходный EventLog FileCleanupService в журнале Application...
+Выполняется фиксация сборки 'C:\tmp\clean_v2\CleanupManager.exe'.
+Затронуты следующие параметры:
+   logtoconsole = 
+   assemblypath = C:\tmp\clean_v2\CleanupManager.exe
+   logfile = C:\tmp\clean_v2\CleanupManager.InstallLog
+Выполняется удаление сборки 'C:\tmp\clean_v2\CleanupManager.exe'.
+Затронуты следующие параметры:
+   logtoconsole = 
+   assemblypath = C:\tmp\clean_v2\CleanupManager.exe
+   logfile = C:\tmp\clean_v2\CleanupManager.InstallLog
+Выполняется удаление источника EventLog FileCleanupService.
+Выполняется удаление службы FileCleanupService из системы...
+Служба FileCleanupService успешно удалена из системы.
+Выполняется удаление сборки 'C:\tmp\clean_v2\CleanupManager.exe'.
+Затронуты следующие параметры:
+   logtoconsole = 
+   assemblypath = C:\tmp\clean_v2\CleanupManager.exe
+   logfile = C:\tmp\clean_v2\CleanupManager.InstallLog
+Выполняется удаление источника EventLog FileCleanupService.
+Предупреждение. Источник FileCleanupService не зарегистрирован на локальном компьютере.
+Выполняется удаление службы FileCleanupService из системы...
+Служба FileCleanupService успешно удалена из системы.
+Выполняется удаление сборки 'C:\tmp\clean_v2\CleanupManager.exe'.
+Затронуты следующие параметры:
+   logtoconsole = 
+   assemblypath = C:\tmp\clean_v2\CleanupManager.exe
+   logfile = C:\tmp\clean_v2\CleanupManager.InstallLog
+Выполняется удаление источника EventLog FileCleanupService.
+Предупреждение. Источник FileCleanupService не зарегистрирован на локальном компьютере.
+Выполняется удаление службы FileCleanupService из системы...
+Служба FileCleanupService успешно удалена из системы.
+Выполняется установка сборки 'C:\tmp\clean_v2\CleanupManager.exe'.
+Затронуты следующие параметры:
+   logtoconsole = 
+   assemblypath = C:\tmp\clean_v2\CleanupManager.exe
+   logfile = C:\tmp\clean_v2\CleanupManager.InstallLog
+Устанавливается служба FileCleanupService...
+Служба FileCleanupService успешно установлена.
+Создается исходный EventLog FileCleanupService в журнале Application...
+Выполняется фиксация сборки 'C:\tmp\clean_v2\CleanupManager.exe'.
+Затронуты следующие параметры:
+   logtoconsole = 
+   assemblypath = C:\tmp\clean_v2\CleanupManager.exe
+   logfile = C:\tmp\clean_v2\CleanupManager.InstallLog
+Выполняется удаление сборки 'C:\tmp\clean_v2\CleanupManager.exe'.
+Затронуты следующие параметры:
+   logtoconsole = 
+   assemblypath = C:\tmp\clean_v2\CleanupManager.exe
+   logfile = C:\tmp\clean_v2\CleanupManager.InstallLog
+Выполняется удаление источника EventLog FileCleanupService.
+Выполняется удаление службы FileCleanupService из системы...
+Служба FileCleanupService успешно удалена из системы.
+Выполняется установка сборки 'C:\tmp\clean_v2\CleanupManager.exe'.
+Затронуты следующие параметры:
+   logtoconsole = 
+   assemblypath = C:\tmp\clean_v2\CleanupManager.exe
+   logfile = C:\tmp\clean_v2\CleanupManager.InstallLog
+Устанавливается служба FileCleanupService...
+Служба FileCleanupService успешно установлена.
+Создается исходный EventLog FileCleanupService в журнале Application...
+Выполняется фиксация сборки 'C:\tmp\clean_v2\CleanupManager.exe'.
+Затронуты следующие параметры:
+   logtoconsole = 
+   assemblypath = C:\tmp\clean_v2\CleanupManager.exe
+   logfile = C:\tmp\clean_v2\CleanupManager.InstallLog
+Выполняется удаление сборки 'C:\tmp\clean_v2\CleanupManager.exe'.
+Затронуты следующие параметры:
+   logtoconsole = 
+   assemblypath = C:\tmp\clean_v2\CleanupManager.exe
+   logfile = C:\tmp\clean_v2\CleanupManager.InstallLog
+Выполняется удаление источника EventLog FileCleanupService.
+Выполняется удаление службы FileCleanupService из системы...
+Служба FileCleanupService успешно удалена из системы.
+Выполняется установка сборки 'C:\tmp\clean_v2\CleanupManager.exe'.
+Затронуты следующие параметры:
+   logtoconsole = 
+   assemblypath = C:\tmp\clean_v2\CleanupManager.exe
+   logfile = C:\tmp\clean_v2\CleanupManager.InstallLog
+Устанавливается служба FileCleanupService...
+Служба FileCleanupService успешно установлена.
+Создается исходный EventLog FileCleanupService в журнале Application...
+Выполняется фиксация сборки 'C:\tmp\clean_v2\CleanupManager.exe'.
+Затронуты следующие параметры:
+   logtoconsole = 
+   assemblypath = C:\tmp\clean_v2\CleanupManager.exe
+   logfile = C:\tmp\clean_v2\CleanupManager.InstallLog
+Выполняется установка сборки 'C:\tmp\clean_v2\CleanupManager.exe'.
+Затронуты следующие параметры:
+   logtoconsole = 
+   assemblypath = C:\tmp\clean_v2\CleanupManager.exe
+   logfile = C:\tmp\clean_v2\CleanupManager.InstallLog
+Устанавливается служба FileCleanupService...
+Создается исходный EventLog FileCleanupService в журнале Application...
+Выполняется откат для сборки 'C:\tmp\clean_v2\CleanupManager.exe'.
+Затронуты следующие параметры:
+   logtoconsole = 
+   assemblypath = C:\tmp\clean_v2\CleanupManager.exe
+   logfile = C:\tmp\clean_v2\CleanupManager.InstallLog
+Восстанавливается исходное состояние журнала событий для источника FileCleanupService.
+Выполняется удаление сборки 'C:\tmp\clean_v2\CleanupManager.exe'.
+Затронуты следующие параметры:
+   logtoconsole = 
+   assemblypath = C:\tmp\clean_v2\CleanupManager.exe
+   logfile = C:\tmp\clean_v2\CleanupManager.InstallLog
+Выполняется удаление источника EventLog FileCleanupService.
+Выполняется удаление службы FileCleanupService из системы...
+Служба FileCleanupService успешно удалена из системы.

@@ -1,0 +1,224 @@
+
+// Служба
+public class CleanupService : ServiceBase
+{
+    private System.Threading.Timer timer;
+
+    public CleanupService()
+    {
+        this.ServiceName = "FileCleanupService";
+    }
+
+    protected override void OnStart(string[] args)
+    {
+        try
+        {
+            Program.Log("Служба запущена", "SERVICE");
+            Program.LoadConfig();
+            
+            // Проверка настроек - хотя бы одна папка должна быть настроена
+            if (Program.Config.Folders == null || Program.Config.Folders.Count == 0)
+            {
+                Program.Log("ОШИБКА: Не настроено ни одной папки для очистки!", "ERROR");
+                throw new Exception("Папки для очистки не настроены. Откройте приложение и добавьте папки.");
+            }
+            
+            int enabledCount = Program.Config.Folders.Count(f => f.Enabled && !string.IsNullOrEmpty(f.FolderPath));
+            if (enabledCount == 0)
+            {
+                Program.Log("ОШИБКА: Нет включенных папок для очистки!", "ERROR");
+                throw new Exception("Включите хотя бы одну папку для очистки.");
+            }
+            
+            Program.Log(string.Format("Конфигурация проверена: {0} папок, {1} включено", 
+                Program.Config.Folders.Count, enabledCount), "INFO");
+            
+            try
+            {
+                Program.SendTelegramNotification(string.Format("✅ Служба File Cleanup Service запущена\n📁 Папок настроено: {0}\n✓ Включено: {1}", 
+                    Program.Config.Folders.Count, enabledCount));
+            }
+            catch (Exception ex)
+            {
+                Program.Log("Ошибка отправки Telegram уведомления: " + ex.Message, "WARN");
+            }
+            
+            int interval = Program.Config.IntervalMinutes * 60 * 1000;
+            if (interval <= 0) interval = 3600000;
+
+            timer = new System.Threading.Timer(DoCleanup, null, 0, interval);
+            Program.Log("Служба успешно запущена, интервал: " + interval + "мс", "INFO");
+        }
+        catch (Exception ex)
+        {
+            Program.Log("Критическая ошибка запуска службы: " + ex.ToString(), "ERROR");
+            throw;
+        }
+    }
+
+    protected override void OnStop()
+    {
+        try
+        {
+            Program.Log("Служба остановлена", "SERVICE");
+            try
+            {
+                Program.SendTelegramNotification("🛑 Служба File Cleanup Service остановлена");
+            }
+            catch (Exception ex)
+            {
+                Program.Log("Ошибка отправки Telegram уведомления: " + ex.Message, "WARN");
+            }
+            if (timer != null) timer.Dispose();
+        }
+        catch (Exception ex)
+        {
+            Program.Log("Ошибка остановки службы: " + ex.ToString(), "ERROR");
+        }
+    }
+
+    private void DoCleanup(object state)
+    {
+        Program.LoadConfig();
+        Cleaner.RunCleanupAll();
+    }
+}
+
+// Установщик службы
+[RunInstaller(true)]
+public class MyServiceInstaller : Installer
+{
+    public MyServiceInstaller()
+    {
+        var processInstaller = new ServiceProcessInstaller();
+        var serviceInstaller = new ServiceInstaller();
+
+        processInstaller.Account = ServiceAccount.LocalSystem;
+
+        serviceInstaller.DisplayName = "File Cleanup Manager";
+        serviceInstaller.StartType = ServiceStartMode.Automatic;
+        serviceInstaller.ServiceName = "FileCleanupService";
+        serviceInstaller.Description = "Автоматическая очистка старых файлов для нескольких папок";
+
+        Installers.Add(processInstaller);
+        Installers.Add(serviceInstaller);
+    }
+}
+
+// Очистка
+public static class Cleaner
+{
+    // Очистка всех включенных папок
+    public static void RunCleanupAll()
+    {
+        if (Program.Config.Folders == null || Program.Config.Folders.Count == 0)
+        {
+            Program.Log("Нет настроенных папок для очистки", "WARN");
+            return;
+        }
+
+        int totalDeleted = 0;
+        var results = new List<string>();
+
+        foreach (var folder in Program.Config.Folders)
+        {
+            if (!folder.Enabled)
+            {
+                Program.Log(string.Format("Папка '{0}' отключена, пропускаем", folder.TabName), "INFO");
+                continue;
+            }
+
+            int deleted = RunCleanup(folder);
+            totalDeleted += deleted;
+            
+            if (deleted > 0)
+            {
+                results.Add(string.Format("📂 *{0}*: {1} файлов", folder.TabName, deleted));
+            }
+        }
+
+        if (totalDeleted > 0 && results.Count > 0)
+        {
+            string msg = "🧹 *Очистка завершена*\n\n" + string.Join("\n", results.ToArray()) + 
+                         "\n\n🗑 *Всего удалено: " + totalDeleted + "*";
+            try
+            {
+                Program.SendTelegramNotification(msg);
+            }
+            catch (Exception ex)
+            {
+                Program.Log("Ошибка отправки Telegram уведомления: " + ex.Message, "WARN");
+            }
+        }
+    }
+
+    // Очистка одной папки
+    public static int RunCleanup(FolderConfig folder)
+    {
+        if (string.IsNullOrEmpty(folder.FolderPath) || !Directory.Exists(folder.FolderPath))
+        {
+            Program.Log(string.Format("Папка '{0}' не найдена: {1}", folder.TabName, folder.FolderPath), "WARN");
+            return 0;
+        }
+
+        Program.Log(string.Format("Начало очистки '{0}': {1}", folder.TabName, folder.FolderPath), "INFO");
+        int deletedCount = 0;
+        DateTime threshold = DateTime.Now.AddDays(-folder.DaysOld);
+
+        try
+        {
+            System.IO.SearchOption searchOption = folder.Recursive ? System.IO.SearchOption.AllDirectories : System.IO.SearchOption.TopDirectoryOnly;
+            var files = Directory.GetFiles(folder.FolderPath, "*.*", searchOption);
+
+            foreach (var file in files)
+            {
+                try
+                {
+                    if (Program.Config.DetailedLog) Program.Log("Проверка файла: " + file, "DEBUG");
+
+                    // Фильтр расширений
+                    if (folder.FileExtensions != null && folder.FileExtensions.Count > 0)
+                    {
+                        string ext = Path.GetExtension(file).ToLower();
+                        if (!folder.FileExtensions.Contains(ext)) 
+                        {
+                            if (Program.Config.DetailedLog) Program.Log("Пропуск (расширение): " + file, "DEBUG");
+                            continue;
+                        }
+                    }
+
+                    DateTime lastWriteTime = File.GetLastWriteTime(file);
+                    if (lastWriteTime < threshold)
+                    {
+                        if (folder.UseRecycleBin)
+                        {
+                             FileSystem.DeleteFile(file, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                        }
+                        else
+                        {
+                            File.Delete(file);
+                        }
+                        
+                        deletedCount++;
+                        Program.Log(string.Format("Удален файл: {0}", file), "INFO");
+                    }
+                    else
+                    {
+                        if (Program.Config.DetailedLog) Program.Log("Пропуск (слишком новый): " + file, "DEBUG");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Program.Log(string.Format("Ошибка удаления файла {0}: {1}", file, ex.Message), "ERROR");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Program.Log(string.Format("Критическая ошибка сканирования '{0}': {1}", folder.TabName, ex.Message), "ERROR");
+        }
+
+        Program.Log(string.Format("Очистка '{0}' завершена. Удалено файлов: {1}", folder.TabName, deletedCount), "INFO");
+        return deletedCount;
+    }
+}

@@ -1,0 +1,84 @@
+﻿// Служба
+public class CleanupService : ServiceBase
+{
+    private System.Threading.Timer timer;
+
+    public CleanupService()
+    {
+        this.ServiceName = ""FileCleanupService"";
+    }
+
+    protected override void OnStart(string[] args)
+    {
+        try
+        {
+            Program.Log(""Служба запущена"", ""SERVICE"");
+            Program.LoadConfig();
+            
+            // Проверка настроек - хотя бы одна папка должна быть настроена
+            if (Program.Config.Folders == null || Program.Config.Folders.Count == 0)
+            {
+                Program.Log(""ОШИБКА: Не настроено ни одной папки для очистки!"", ""ERROR"");
+                throw new Exception(""Папки для очистки не настроены. Откройте приложение и добавьте папки."");
+            }
+            
+            int enabledCount = Program.Config.Folders.Count(f => f.Enabled && !string.IsNullOrEmpty(f.FolderPath));
+            if (enabledCount == 0)
+            {
+                Program.Log(""ОШИБКА: Нет включенных папок для очистки!"", ""ERROR"");
+                throw new Exception(""Включите хотя бы одну папку для очистки."");
+            }
+            
+            Program.Log(string.Format(""Конфигурация проверена: {0} папок, {1} включено"", 
+                Program.Config.Folders.Count, enabledCount), ""INFO"");
+            
+            try
+            {
+                Program.SendTelegramNotification(string.Format(""✅ Служба File Cleanup Service запущена\n📁 Папок настроено: {0}\n✓ Включено: {1}"", 
+                    Program.Config.Folders.Count, enabledCount));
+            }
+            catch (Exception ex)
+            {
+                Program.Log(""Ошибка отправки Telegram уведомления: "" + ex.Message, ""WARN"");
+            }
+            
+            int interval = Program.Config.IntervalMinutes * 60 * 1000;
+            if (interval <= 0) interval = 3600000;
+
+            timer = new System.Threading.Timer(DoCleanup, null, 0, interval);
+            Program.Log(""Служба успешно запущена, интервал: "" + interval + ""мс"", ""INFO"");
+        }
+        catch (Exception ex)
+        {
+            Program.Log(""Критическая ошибка запуска службы: "" + ex.ToString(), ""ERROR"");
+            throw;
+        }
+    }
+
+    protected override void OnStop()
+    {
+        try
+        {
+            Program.Log(""Служба остановлена"", ""SERVICE"");
+            try
+            {
+                Program.SendTelegramNotification(""🛑 Служба File Cleanup Service остановлена"");
+            }
+            catch (Exception ex)
+            {
+                Program.Log(""Ошибка отправки Telegram уведомления: "" + ex.Message, ""WARN"");
+            }
+            if (timer != null) timer.Dispose();
+        }
+        catch (Exception ex)
+        {
+            Program.Log(""Ошибка остановки службы: "" + ex.ToString(), ""ERROR"");
+        }
+    }
+
+    private void DoCleanup(object state)
+    {
+        Program.LoadConfig();
+        Cleaner.RunCleanupAll();
+    }
+}
